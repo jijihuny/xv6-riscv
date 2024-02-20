@@ -1,0 +1,6 @@
+usertrap
+0x7. specifies what syscall is to call.
+user mode. because sstatus->SPP is set to 0.
+p->trapframe->a7.
+address 0 is unused space. scause says that load page at 0 is failed.
+initcode. 1.
