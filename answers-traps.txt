@@ -1,0 +1,6 @@
+a2
+no. compiler precalculated the result of f and g.
+1554
+38
+0x00726c64
+a2's value is not loaded
