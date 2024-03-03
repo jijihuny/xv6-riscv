@@ -140,6 +140,12 @@ found:
     return 0;
   }
 
+  if((p->alarm_tf = (struct trapframe *)kalloc()) == 0) {
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
   // Set up new context to start executing at forkret,
   // which returns to user space.
   memset(&p->context, 0, sizeof(p->context));
@@ -160,6 +166,8 @@ freeproc(struct proc *p)
   p->trapframe = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
+  if(p->alarm_tf)
+    kfree((void*)p->alarm_tf);
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
@@ -245,6 +253,10 @@ userinit(void)
   // prepare for the very first "return" from kernel to user.
   p->trapframe->epc = 0;      // user program counter
   p->trapframe->sp = PGSIZE;  // user stack pointer
+
+  p->interval = 0;
+  p->handler = 0;
+  p->ticks = 0;
 
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
